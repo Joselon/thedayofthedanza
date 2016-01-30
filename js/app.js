@@ -1,7 +1,7 @@
 console.log('loaded');
 
 var MAX_PLAYERS = 2;
-
+var MAX_MOVING_TIME = 20;
 var stage,
     actualPlayer,
     actualPlayerPosition = 0,
@@ -24,8 +24,8 @@ var stage,
                 }
             },
             positions: {
-                default: 1,
-                min: 0,
+                default: 2,
+                min: 2,
                 max: 4
             },
             sprite: {}
@@ -43,14 +43,14 @@ var stage,
                 },
                 // define two animations, run (loops, 1.5x speed) and jump (returns to run):
                 "animations": {
-                    "run": [0, 25, "run", 1.5],
+                    "run": [0, 25, "run", 3],
                     "jump": [26, 63, "run"]
                 }
             },
             positions: {
-                default: 6,
-                min: 4,
-                max: 7
+                default: 5,
+                min: 3,
+                max: 5
             },
             sprite: {}
         }
@@ -75,16 +75,19 @@ function init() {
 
     actualPlayer = players[0];
     players[1].sprite.scaleX = -1;
+
+    createjs.Ticker.addEventListener("tick", onEnterFrame);
 }
 
 function loadPlayer(player) {
-    var spriteSheet = new createjs.SpriteSheet(player.data);
+    player.spriteSheet = new createjs.SpriteSheet(player.data);
 
-    player.sprite = new createjs.Sprite(spriteSheet, "run");
+    player.sprite = new createjs.Sprite(player.spriteSheet, "run");
     player.position = player.positions.default;
+    player.movingTime = 0;
 
-    spriteSheet.on("complete", onLoadComplete);
-    spriteSheet.on("error", onLoadError);
+    player.spriteSheet.on("complete", onLoadComplete);
+    player.spriteSheet.on("error", onLoadError);
     stage.addChild(player.sprite);
     movePlayer(player);
 }
@@ -100,6 +103,21 @@ function nextPlayer() {
     actualPlayer = players[actualPlayerPosition];
 }
 
+function onEnterFrame(event) {
+    if (actualPlayer.movingRight || actualPlayer.movingLeft || actualPlayer.movingUp) {
+        var deltaS = event.delta / 1000;
+        actualPlayer.movingTime++;
+
+        if (actualPlayer.movingTime < MAX_MOVING_TIME) {
+            if (actualPlayer.movingRight) {
+                actualPlayer.sprite.x += 150*deltaS;
+            }
+            if (actualPlayer.movingLeft) {
+                actualPlayer.sprite.x -= 150*deltaS;
+            }
+        }
+    }
+}
 
 function onLoadError(event) {
     console.log("Error", event);
