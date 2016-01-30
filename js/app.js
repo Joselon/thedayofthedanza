@@ -2,9 +2,9 @@ console.log('loaded');
 
 var MAX_PLAYERS = 2;
 var MAX_MOVING_TIME = 20;
-var stage,
-    actualPlayer,
+var actualPlayer,
     actualPlayerPosition = 0,
+    loader,
     players = [
         {
             data: {
@@ -20,12 +20,12 @@ var stage,
                 // define two animations, run (loops, 1.5x speed) and jump (returns to run):
                 "animations": {
                     "run": [0, 25, "run", 1.5],
-                    "jump": [26, 63, "run"]
+                    "jump": [26, 63, "run", 1.5]
                 }
             },
             positions: {
-                default: 2,
-                min: 2,
+                default: 1,
+                min: 1,
                 max: 4
             },
             sprite: {}
@@ -48,35 +48,65 @@ var stage,
                 }
             },
             positions: {
-                default: 5,
+                default: 6  ,
                 min: 3,
-                max: 5
+                max: 6
             },
             sprite: {}
         }
     ],
     regionParts = 8,
-    regionWidth;
+    regionWidth,
+    stage;
 
 function init() {
     stage = new createjs.Stage(document.getElementById("gameCanvas"));
+    stage.addEventListener("stagemousedown", handleJump);
 
     createjs.Ticker.timingMode = createjs.Ticker.RAF;
     createjs.Ticker.addEventListener("tick", stage);
+    createjs.Ticker.addEventListener("tick", onEnterFrame);
 
     document.onkeydown = handleKeyDown;
     document.onkeyup = handleKeyUp;
     window.addEventListener('resize', resize, false);
+
     resize(stage);
     regionWidth = stage.canvas.width / regionParts;
+
+    var bkgFile = loader.getResult("bkg");
+    bkg = new createjs.Shape();
+    bkg.graphics.beginBitmapFill(bkgFile).drawRect(0, 0, bkgFile.width, bkgFile.height);
+    var ratioX = stage.canvas.width/bkgFile.width;
+    var ratioY = stage.canvas.height/bkgFile.height;
+    
+    if(ratioX > ratioY && ratioX > 0) {
+        bkg.scaleX = ratioX;
+    } else if (ratioY > 0) {
+        bkg.scaleY = bkg.scaleX = ratioY;
+    } else {
+        bkg.scaleX = ratioX;
+        bkg.scaleY = ratioY;
+    }
+
+    bkg.y = 0;
+    stage.addChild(bkg);
 
     loadPlayer(players[0]);
     loadPlayer(players[1]);
 
     actualPlayer = players[0];
     players[1].sprite.scaleX = -1;
+}
 
-    createjs.Ticker.addEventListener("tick", onEnterFrame);
+function loadGame() {
+    var manifest = [
+        {src: "bkg"+ Math.ceil(Math.random()*2) +".png", id: "bkg"}
+    ];
+
+    loader = new createjs.LoadQueue(false);
+    loader.addEventListener("complete", init);
+    loader.loadManifest(manifest, true, "assets/");
 }
 
 function loadPlayer(player) {
@@ -101,6 +131,7 @@ function nextPlayer() {
     actualPlayerPosition++;
     if (actualPlayerPosition >= MAX_PLAYERS) actualPlayerPosition = 0;
     actualPlayer = players[actualPlayerPosition];
+    //debugger;
 }
 
 function onEnterFrame(event) {
