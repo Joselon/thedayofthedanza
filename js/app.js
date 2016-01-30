@@ -9,18 +9,21 @@ var actualPlayer,
         {
             data: {
                 framerate: 30,
-                "images": ["assets/grant.png"],
+                "images": ["assets/skeleton.png"],
                 "frames": {
-                    "regX": 82,
+                    "regX": 150,
                     "regY": 0,
-                    "width": 165,
-                    "height": 292,
-                    "count": 64
+                    "width": 300,
+                    "height": 440,
+                    "count": 101
                 },
                 // define two animations, run (loops, 1.5x speed) and jump (returns to run):
                 "animations": {
-                    "run": [0, 25, "run", 1.5],
-                    "jump": [26, 63, "run", 1.5]
+                    "idle": [0, 20, "walk", 1],
+                    "W": [21, 40, "W"],
+                    "Q": [41, 60, "Q"],
+                    "S": [61, 80, "S"],
+                    "A": [81, 100, "A"]
                 }
             },
             positions: {
@@ -33,18 +36,21 @@ var actualPlayer,
         {
             data: {
                 framerate: 30,
-                "images": ["assets/grant.png"],
+                "images": ["assets/skeleton.png"],
                 "frames": {
-                    "regX": 82,
+                    "regX": 150,
                     "regY": 0,
-                    "width": 165,
-                    "height": 292,
-                    "count": 64
+                    "width": 300,
+                    "height": 440,
+                    "count": 101
                 },
                 // define two animations, run (loops, 1.5x speed) and jump (returns to run):
                 "animations": {
-                    "run": [0, 25, "run", 3],
-                    "jump": [26, 63, "run"]
+                    "idle": [0, 20, "idle", 1],
+                    "W": [21, 40, "W"],
+                    "Q": [41, 60, "Q"],
+                    "S": [61, 80, "S"],
+                    "A": [81, 100, "A"]
                 }
             },
             positions: {
@@ -79,7 +85,7 @@ function init() {
     bkg.graphics.beginBitmapFill(bkgFile).drawRect(0, 0, bkgFile.width, bkgFile.height);
     var ratioX = stage.canvas.width/bkgFile.width;
     var ratioY = stage.canvas.height/bkgFile.height;
-    
+
     if(ratioX > ratioY && ratioX > 0) {
         bkg.scaleX = ratioX;
     } else if (ratioY > 0) {
@@ -101,7 +107,14 @@ function init() {
 
 function loadGame() {
     var manifest = [
-        {src: "bkg"+ Math.ceil(Math.random()*2) +".png", id: "bkg"}
+        { src: "bkg1.png", id: "bkg" },
+        { src: "arrowUp.png", id: "arrowUp"},
+        { src: "arrowRight.png", id: "arrowRight"},
+        { src: "arrowLeft.png", id: "arrowLeft"},
+        { src: "arrowQ.png", id: "arrowQ"},
+        { src: "arrowW.png", id: "arrowW"},
+        { src: "arrowS.png", id: "arrowS"},
+        { src: "arrowA.png", id: "arrowA"}
     ];
 
     loader = new createjs.LoadQueue(false);
