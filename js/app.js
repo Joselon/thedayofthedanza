@@ -54,6 +54,4 @@ function onLoadComplete(event) {
 function resize(stage) {
     stage.canvas.width = window.innerWidth;
     stage.canvas.height = window.innerHeight;
-
-
 }
