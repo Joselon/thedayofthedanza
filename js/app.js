@@ -9,21 +9,22 @@ var actualPlayer,
         {
             data: {
                 framerate: 30,
-                "images": ["assets/skeleton.png"],
+                "images": ["assets/skeleton2.png"],
                 "frames": {
                     "regX": 150,
                     "regY": 0,
                     "width": 300,
-                    "height": 440,
-                    "count": 101
+                    "height": 500,
+                    "count": 121
                 },
                 // define two animations, run (loops, 1.5x speed) and jump (returns to run):
                 "animations": {
-                    "idle": [0, 20, "walk", 1],
-                    "W": [21, 40, "W"],
-                    "Q": [41, 60, "Q"],
-                    "S": [61, 80, "S"],
-                    "A": [81, 100, "A"]
+                    "idle": [0, 20, "idle", 1],
+                    "W": [21, 40, "idle"],
+                    "Q": [41, 60, "idle"],
+                    "S": [61, 80, "idle"],
+                    "A": [81, 100, "idle"],
+                    "jump": [101, 120, "idle"]
                 }
             },
             positions: {
@@ -36,34 +37,108 @@ var actualPlayer,
         {
             data: {
                 framerate: 30,
-                "images": ["assets/skeleton.png"],
+                "images": ["assets/girl.png"],
                 "frames": {
                     "regX": 150,
                     "regY": 0,
                     "width": 300,
-                    "height": 440,
-                    "count": 101
+                    "height": 500,
+                    "count": 121
                 },
-                // define two animations, run (loops, 1.5x speed) and jump (returns to run):
                 "animations": {
                     "idle": [0, 20, "idle", 1],
-                    "W": [21, 40, "W"],
-                    "Q": [41, 60, "Q"],
-                    "S": [61, 80, "S"],
-                    "A": [81, 100, "A"]
+                    "W": [21, 40, "idle"],
+                    "Q": [41, 60, "idle"],
+                    "S": [61, 80, "idle"],
+                    "A": [81, 100, "idle"],
+                    "jump": [101, 120, "idle"]
                 }
             },
             positions: {
-                default: 6  ,
+                default: 6,
                 min: 3,
                 max: 6
             },
             sprite: {}
         }
     ],
+    buttons = [
+        {
+            data: {
+                framerate: 30,
+                "images": ["assets/arrowRight.png"],
+                "frames": {"regX": 0, "regY": 0, "width": 80, "height": 80, "count": 1}
+            },
+            sprite: {},
+            xoffset: 80,
+            yoffset: 80
+        },
+        {
+            data: {
+                framerate: 30,
+                "images": ["assets/arrowLeft.png"],
+                "frames": {"regX": 0, "regY": 0, "width": 80, "height": 80, "count": 1}
+            },
+            sprite: {},
+            xoffset: 0,
+            yoffset: 80
+        },
+        {
+            data: {
+                framerate: 30,
+                "images": ["assets/arrowUp.png"],
+                "frames": {"regX": 0, "regY": 0, "width": 80, "height": 80, "count": 1}
+            },
+            sprite: {},
+            xoffset: 40,
+            yoffset: 0
+        },
+        {
+            data: {
+                framerate: 30,
+                "images": ["assets/arrowA.png"],
+                "frames": {"regX": 0, "regY": 0, "width": 80, "height": 80, "count": 1}
+            },
+            sprite: {},
+            xoffset: -160,
+            yoffset: 80
+        },
+        {
+            data: {
+                framerate: 30,
+                "images": ["assets/arrowQ.png"],
+                "frames": {"regX": 0, "regY": 0, "width": 80, "height": 80, "count": 1}
+            },
+            sprite: {},
+            xoffset: -160,
+            yoffset: 0
+        },
+        {
+            data: {
+                framerate: 30,
+                "images": ["assets/arrowS.png"],
+                "frames": {"regX": 0, "regY": 0, "width": 80, "height": 80, "count": 1}
+            },
+            sprite: {},
+            xoffset: -80,
+            yoffset: 80
+        },
+        {
+            data: {
+                framerate: 30,
+                "images": ["assets/arrowW.png"],
+                "frames": {"regX": 0, "regY": 0, "width": 80, "height": 80, "count": 1}
+            },
+            sprite: {},
+            xoffset: -80,
+            yoffset: 0
+        }
+    ],
     regionParts = 8,
     regionWidth,
-    stage;
+    stage,
+    soundID1,
+    soundID2;
 
 function init() {
     stage = new createjs.Stage(document.getElementById("gameCanvas"));
@@ -86,6 +161,7 @@ function init() {
     var ratioX = stage.canvas.width/bkgFile.width;
     var ratioY = stage.canvas.height/bkgFile.height;
 
+    /*
     if(ratioX > ratioY && ratioX > 0) {
         bkg.scaleX = ratioX;
     } else if (ratioY > 0) {
@@ -94,27 +170,44 @@ function init() {
         bkg.scaleX = ratioX;
         bkg.scaleY = ratioY;
     }
+    */
+    bkg.scaleY = ratioY;
+    bkg.scaleX = ratioX;
+
+
 
     bkg.y = 0;
     stage.addChild(bkg);
 
-    loadPlayer(players[0]);
-    loadPlayer(players[1]);
+    loadPlayer(0);
+    loadPlayer(1);
 
     actualPlayer = players[0];
     players[1].sprite.scaleX = -1;
 }
 
+
+function loadButtons (player, index) {
+    for (var i = 0; i < buttons.length; i++) {
+        var button = buttons[i];
+        button.spriteSheet = new createjs.SpriteSheet(button.data);
+
+        button.sprite = new createjs.Sprite(button.spriteSheet);
+        button.movingTime = 0;
+
+        button.spriteSheet.on("complete", onLoadComplete);
+        button.spriteSheet.on("error", onLoadError);
+        stage.addChild(button.sprite);
+
+        var xinit = player.sprite.x;
+        button.sprite.x =  xinit + button.xoffset;
+        button.sprite.y = (stage.canvas.height - 200) / 6 + button.yoffset;
+    }
+}
+
 function loadGame() {
     var manifest = [
-        { src: "bkg1.png", id: "bkg" },
-        { src: "arrowUp.png", id: "arrowUp"},
-        { src: "arrowRight.png", id: "arrowRight"},
-        { src: "arrowLeft.png", id: "arrowLeft"},
-        { src: "arrowQ.png", id: "arrowQ"},
-        { src: "arrowW.png", id: "arrowW"},
-        { src: "arrowS.png", id: "arrowS"},
-        { src: "arrowA.png", id: "arrowA"}
+        { src: "bg.png", id: "bkg" }
     ];
 
     loader = new createjs.LoadQueue(false);
@@ -122,10 +215,11 @@ function loadGame() {
     loader.loadManifest(manifest, true, "assets/");
 }
 
-function loadPlayer(player) {
+function loadPlayer(index) {
+    var player = players[index];
     player.spriteSheet = new createjs.SpriteSheet(player.data);
 
-    player.sprite = new createjs.Sprite(player.spriteSheet, "run");
+    player.sprite = new createjs.Sprite(player.spriteSheet, "idle");
     player.position = player.positions.default;
     player.movingTime = 0;
 
@@ -133,18 +227,18 @@ function loadPlayer(player) {
     player.spriteSheet.on("error", onLoadError);
     stage.addChild(player.sprite);
     movePlayer(player);
+    loadButtons(player, index);
 }
 
 function movePlayer(player) {
     player.sprite.x = regionWidth * (player.position + 0.5);
-    player.sprite.y = (stage.canvas.height - player.sprite.spriteSheet._frameHeight) / 2;
+    player.sprite.y = (stage.canvas.height - player.sprite.spriteSheet._frameHeight) + 100;
 }
 
 function nextPlayer() {
     actualPlayerPosition++;
     if (actualPlayerPosition >= MAX_PLAYERS) actualPlayerPosition = 0;
     actualPlayer = players[actualPlayerPosition];
-    //debugger;
 }
 
 function onEnterFrame(event) {
@@ -154,10 +248,10 @@ function onEnterFrame(event) {
 
         if (actualPlayer.movingTime < MAX_MOVING_TIME) {
             if (actualPlayer.movingRight) {
-                actualPlayer.sprite.x += 150*deltaS;
+                actualPlayer.sprite.x += 150 * deltaS;
             }
             if (actualPlayer.movingLeft) {
-                actualPlayer.sprite.x -= 150*deltaS;
+                actualPlayer.sprite.x -= 150 * deltaS;
             }
         }
     }
