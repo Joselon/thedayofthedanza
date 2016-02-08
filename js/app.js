@@ -212,6 +212,7 @@ var actualPlayer,
     ss,
     textPlayer=["Player Uno!!","Player Dos!!"],
     ritualDance=[],
+    textImitated="Te toca",
     stage;
 
 function init() {
@@ -370,7 +371,7 @@ function nextPlayer() {
    /* for(var j=0; actualPlayer.dance.length;j++){
     ritualDance[j]=actualPlayer.dance[j];
     }*/
-    ritualDance=actualPlayer.dance;
+    ritualDance=actualPlayer.dance.slice(0);
     console.log("Baile a imitar:"+ritualDance);
     actualPlayer.dance.length=0;
     actualPlayer = players[actualPlayerPosition];
@@ -378,7 +379,7 @@ function nextPlayer() {
     
     currentDanceSteps++;
     
-    textTurno.text="Turno..."+textPlayer[actualPlayerPosition];
+    textTurno.text=textImitated+"...Turno"+textPlayer[actualPlayerPosition];
     //textTurno.text+(currentDanceSteps.toString()); //comentado hasta que haya font de numeros
     console.log("Pasos del turno: "+currentDanceSteps);
     

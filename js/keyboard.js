@@ -36,16 +36,22 @@ function handleKeyDown(e) {
         actualPlayer.sprite.gotoAndPlay("S");
          actualPlayer.dance.push("S");
     }
+    
     // Checking if the steps of the last dancing player has reached the mandatory current dance steps
     if(currentDanceSteps>=3){
-        console.log('Que pasa?');
-       /* if((actualPlayer.dance.length)-1===currentDanceSteps-1){
-            //var danza=actualPlayer.dance;
-            console.log('Tenemos que comparar con '+ritualDance);
-            /*if(danza===ritualDance){
-                console.log('Imitado');
-            }
-        }*/
+        
+        if((actualPlayer.dance.length)===currentDanceSteps-1){
+            var imitated=false;
+            for (x=0;x<actualPlayer.dance.length;x++){
+                if (ritualDance[x] == actualPlayer.dance[x])
+                {
+                imitated=true;
+                }
+                else imitated=false;
+         } 
+         if(imitated) textImitated="Bien";
+         else textImitated="Mal"
+        }
     }
     if (actualPlayer.dance.length === currentDanceSteps/*e.keyCode == KEYCODE_ENTER || e.keyCode == KEYCODE_SPACE*/) {
         console.log('dance array of player '+actualPlayerPosition+' has the following values: ', actualPlayer.dance);
