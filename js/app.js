@@ -212,7 +212,6 @@ var actualPlayer,
     ss,
     textPlayer=["Player Uno!!","Player Dos!!"],
     ritualDance=[],
-    textImitated="Te toca",
     stage;
 
 function init() {
@@ -379,7 +378,7 @@ function nextPlayer() {
     
     currentDanceSteps++;
     
-    textTurno.text=textImitated+"...Turno"+textPlayer[actualPlayerPosition];
+    textTurno.text="Turno"+textPlayer[actualPlayerPosition];
     //textTurno.text+(currentDanceSteps.toString()); //comentado hasta que haya font de numeros
     console.log("Pasos del turno: "+currentDanceSteps);
     

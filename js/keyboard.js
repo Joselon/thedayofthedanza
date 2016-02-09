@@ -49,8 +49,8 @@ function handleKeyDown(e) {
                 }
                 else imitated=false;
          } 
-         if(imitated) textImitated="Bien";
-         else textImitated="Mal"
+         if(imitated) textTurno.text="Bien!...ahora paso propio";
+         else textTurno.text="Mal...has cambiado el baile? dale uno mas";
         }
     }
     if (actualPlayer.dance.length === currentDanceSteps/*e.keyCode == KEYCODE_ENTER || e.keyCode == KEYCODE_SPACE*/) {
