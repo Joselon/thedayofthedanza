@@ -209,7 +209,7 @@ var actualPlayer,
     },
     regionParts = 8,
     regionWidth,
-    ss,
+    ss, //Contenedor spritesheet texto
     textPlayer=["Player Uno!!","Player Dos!!"],
     ritualDance=[],
     stage;

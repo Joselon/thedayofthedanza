@@ -18,6 +18,7 @@ function handleKeyDown(e) {
     
     if (e.keyCode == KEYCODE_LEFT) {
         actualPlayer.movingLeft = true;
+        //button[1].sprite.alpha=0.5;
     } else if (e.keyCode == KEYCODE_RIGHT) {
         actualPlayer.movingRight = true;
     } else if (e.keyCode == KEYCODE_UP) {
@@ -49,8 +50,8 @@ function handleKeyDown(e) {
                 }
                 else imitated=false;
          } 
-         if(imitated) textTurno.text="Bien!...ahora paso propio";
-         else textTurno.text="Mal...has cambiado el baile? dale uno mas";
+         if(imitated) textTurno.text="Bien!...Un pasito mas!";
+         else textTurno.text="Mal...Cambio de Baile.Un pasito mas!";
         }
     }
     if (actualPlayer.dance.length === currentDanceSteps/*e.keyCode == KEYCODE_ENTER || e.keyCode == KEYCODE_SPACE*/) {
