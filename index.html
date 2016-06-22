@@ -37,7 +37,8 @@
     <script src="lib/easeljs-NEXT.combined.js"></script>
     <!-- We also provide hosted minified versions of all CreateJS libraries.
 	http://code.createjs.com -->
-    
+    <script src="js/keyboard.js"></script>
+    <script src='js/app.js'></script>
     <style type="text/css">
         body, html {
             margin: 0px;
@@ -73,15 +74,15 @@
 		}
 </style>
 </head>
-<div id="content">
+
+<body onload="loadGame();">
+    <div id="content">
 	<div id="1" onclick="playSound(this)" ondblclick="stop()" class="gridBox"></div>
 	<div id="2" onclick="playSound(this)" ondblclick="stop()" class="gridBox"></div>
     
-</div>   
-<body onload="loadGame();">
+    </div>   
     <canvas id="gameCanvas" width="960" height="540"></canvas>
-    <script src="js/keyboard.js"></script>
-    <script src='js/app.js'></script>
+    
     
 </body>    
 </html>
