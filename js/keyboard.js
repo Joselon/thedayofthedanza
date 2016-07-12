@@ -16,24 +16,24 @@ function handleKeyDown(e) {
         var e = window.event;
     }
     
-    if (e.keyCode == KEYCODE_LEFT) {
+    if (e.keyCode == KEYCODE_LEFT||e.target.id==5) {
         actualPlayer.movingLeft = true;
-        //button[1].sprite.alpha=0.5;
-    } else if (e.keyCode == KEYCODE_RIGHT) {
+        e.target.alpha=0.5;
+    } else if (e.keyCode == KEYCODE_RIGHT||e.target.id==4) {
         actualPlayer.movingRight = true;
-    } else if (e.keyCode == KEYCODE_UP) {
+    } else if (e.keyCode == KEYCODE_UP||e.target.id==6) {
         handleJump();
         actualPlayer.dance.push("SALTO");
-    }  else if (e.keyCode == KEYCODE_Q) {
+    }  else if (e.keyCode == KEYCODE_Q||e.target.id==8) {
         actualPlayer.sprite.gotoAndPlay("Q");
         actualPlayer.dance.push("Q");
-    } else if (e.keyCode == KEYCODE_W) {
+    } else if (e.keyCode == KEYCODE_W||e.target.id==10) {
         actualPlayer.sprite.gotoAndPlay("W");
         actualPlayer.dance.push("W");
-    } else if (e.keyCode == KEYCODE_A) {
+    } else if (e.keyCode == KEYCODE_A||e.target.id==7) {
         actualPlayer.sprite.gotoAndPlay("A");
          actualPlayer.dance.push("A");
-    } else if (e.keyCode == KEYCODE_S) {
+    } else if (e.keyCode == KEYCODE_S||e.target.id==9) {
         actualPlayer.sprite.gotoAndPlay("S");
          actualPlayer.dance.push("S");
     }
@@ -59,7 +59,7 @@ function handleKeyDown(e) {
         nextPlayer();
         
     }
-    
+    e.target.alpha=1;
     //movePlayer(actualPlayer);
      
 }

@@ -68,6 +68,7 @@ var actualPlayer,
             dance:[]
         }
     ],
+           
     buttons = [
         {
             data: {
@@ -77,7 +78,8 @@ var actualPlayer,
             },
             sprite: {},
             xoffset: 80,
-            yoffset: 80
+            yoffset: 80,
+            keyCode:39
         },
         {
             data: {
@@ -87,7 +89,8 @@ var actualPlayer,
             },
             sprite: {},
             xoffset: 0,
-            yoffset: 80
+            yoffset: 80,
+            keyCode:37
         },
         {
             data: {
@@ -97,7 +100,8 @@ var actualPlayer,
             },
             sprite: {},
             xoffset: 40,
-            yoffset: 0
+            yoffset: 0,
+            keyCode:38
         },
         {
             data: {
@@ -107,7 +111,8 @@ var actualPlayer,
             },
             sprite: {},
             xoffset: -160,
-            yoffset: 80
+            yoffset: 80,
+            keyCode:65
         },
         {
             data: {
@@ -117,7 +122,8 @@ var actualPlayer,
             },
             sprite: {},
             xoffset: -160,
-            yoffset: 0
+            yoffset: 0,
+            keyCode:81
         },
         {
             data: {
@@ -127,7 +133,9 @@ var actualPlayer,
             },
             sprite: {},
             xoffset: -80,
-            yoffset: 80
+            yoffset: 80,
+            keyCode:83
+            
         },
         {
             data: {
@@ -137,7 +145,8 @@ var actualPlayer,
             },
             sprite: {},
             xoffset: -80,
-            yoffset: 0
+            yoffset: 0,
+            keyCode:87
         }
     ],
     textfontart = {
@@ -212,11 +221,13 @@ var actualPlayer,
     ss, //Contenedor spritesheet texto
     textPlayer=["Player Uno!!","Player Dos!!"],
     ritualDance=[],
-    stage;
+    stage,
+    boton=[];
 
 function init() {
     stage = new createjs.Stage(document.getElementById("gameCanvas"));
-    stage.addEventListener("stagemousedown", handleJump);
+    //stage.addEventListener("stagemousedown", handleJump);
+    stage.enableMouseOver();
 
     createjs.Ticker.timingMode = createjs.Ticker.RAF;
     createjs.Ticker.addEventListener("tick", stage);
@@ -284,14 +295,34 @@ function init() {
 
     loadPlayer(0);
     loadPlayer(1);
-
+    loadButtons(boton);
+    
+    for (var i = 0; i < boton.length; i++) {
+        boton[i].sprite.addEventListener("click",handleKeyDown);
+    }
+    
     actualPlayer = players[0];
     players[1].sprite.scaleX = -1;
-}
+};
 
 
-function loadButtons (player, index) {
+function loadButtons (boton) {
     for (var i = 0; i < buttons.length; i++) {
+        boton[i] = buttons[i];
+        boton[i].spriteSheet = new createjs.SpriteSheet(buttons[i].data);
+
+        boton[i].sprite = new createjs.Sprite(boton[i].spriteSheet);
+        boton[i].movingTime = 0;
+
+        boton[i].spriteSheet.on("complete", onLoadComplete);
+        boton[i].spriteSheet.on("error", onLoadError);
+        stage.addChild(boton[i].sprite);
+
+        var xinit = stage.canvas.width/2;
+        boton[i].sprite.x =  xinit + boton[i].xoffset;
+        boton[i].sprite.y = (stage.canvas.height - 200) / 6 + boton[i].yoffset;
+        }
+   /* for (var i = 0; i < buttons.length; i++) {
         var button = buttons[i];
         button.spriteSheet = new createjs.SpriteSheet(button.data);
 
@@ -302,15 +333,16 @@ function loadButtons (player, index) {
         button.spriteSheet.on("error", onLoadError);
         stage.addChild(button.sprite);
 
-        var xinit = player.sprite.x;
+        var xinit = stage.canvas.width/2;
         button.sprite.x =  xinit + button.xoffset;
         button.sprite.y = (stage.canvas.height - 200) / 6 + button.yoffset;
-    }
+        //button.sprite.addEventListener("click",handleKeyDown(button));
+    }*/
 }
 
 function loadGame() {
     var manifest = [
-        { src: "bg.png", id: "bkg" }
+        { src: "bkg0.png", id: "bkg" }
     ];
 
     loader = new createjs.LoadQueue(false);
@@ -330,7 +362,7 @@ function loadPlayer(index) {
     player.spriteSheet.on("error", onLoadError);
     stage.addChild(player.sprite);
     movePlayer(player);
-    loadButtons(player, index);
+    
 }
 function soundLoaded(event) {
 		//examples.hideDistractor();
@@ -338,11 +370,12 @@ function soundLoaded(event) {
     div.style.backgroundImage = "url('./assets/audioButtonSheet.png')";
 }
 
-function stop() {
+function stop(target) {
     if (preload != null) {
 	preload.close();
     }
     createjs.Sound.stop();
+    target.className = "gridBox inactive";
 }
 function playSound(target) {
 		//Play the sound: play (src, interrupt, delay, offset, loop, volume, pan)
